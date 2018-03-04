@@ -1,0 +1,63 @@
+<html><head>
+
+                <meta charset="utf-8">
+                <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Test Page</title> 
+				<link href="/path_to/bootstrap/css/bootstrap.css" rel="stylesheet">
+                <link href="/path_to/font-awesome/css/font-awesome.css" rel="stylesheet">
+                <script src="/path_to/jquery/jquery.js"></script>
+                <script src="/path_to/bootstrap/js/bootstrap.js"></script>
+                <script src="Simple.TableData.js"></script></head>
+				<body>
+				<style>.hide{display: none;}</style>
+				
+				<div class="container">
+				<div class="row col-md-12">
+				<div class="table table-responsive table-bordered table-hover">
+				<table id="myTable">
+				<thead>
+				<tr><th data-sort="integer">S/N<span class="pull-right" data-state="-1"><i class="fa fa-sort"></i></span></th>
+				<th data-sort="string">Column 1<span class="pull-right" data-state="-1"><i class="fa fa-sort"></i></span></th>
+				<th>Column 2</th>
+				<th>Column 3</th>
+				<th>Column 4</th>
+				<th>Column 5</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr><td>1</td><td>loginEmail : debascoguy@gmail.com</td><td>loginUsername : debascoguy</td><td>email : debascoguy@gmail.com</td><td>username : debascoguy</td><td>all_columns : debascoguy@gmail.com debascoguy 4 debascoguy@gmail.com debascoguy 4</td></tr><tr><td>2</td><td>loginEmail : debascoguy@yahoo.com</td><td>loginUsername : </td><td>email : debascoguy@yahoo.com</td><td>username : </td><td>priv_level : 1</td><td>all_columns : debascoguy@yahoo.com  1 debascoguy@yahoo.com  1</td></tr><tr><td>3</td><td>loginEmail : debascoguy@gmail.com</td><td>loginUsername : debascoguy</td><td>email : debascoguy@gmail.com</td><td>username : debascoguy</td><td>all_columns : debascoguy@gmail.com debascoguy 4 debascoguy@gmail.com debascoguy 4</td></tr><tr><td>4</td><td>loginEmail : debascoguy@yahoo.com</td><td>loginUsername : </td><td>email : debascoguy@yahoo.com</td><td>username : </td><td>priv_level : 1</td><td>all_columns : debascoguy@yahoo.com  1 debascoguy@yahoo.com  1</td></tr><tr><td>5</td><td>loginEmail : debascoguy@gmail.com</td><td>loginUsername : debascoguy</td><td>email : debascoguy@gmail.com</td><td>username : debascoguy</td><td>all_columns : debascoguy@gmail.com debascoguy 4 debascoguy@gmail.com debascoguy 4</td></tr><tr><td>6</td><td>loginEmail : debascoguy@yahoo.com</td><td>loginUsername : </td><td>email : debascoguy@yahoo.com</td><td>username : </td><td>priv_level : 1</td><td>all_columns : debascoguy@yahoo.com  1 debascoguy@yahoo.com  1</td></tr><tr><td>7</td><td>loginEmail : debascoguy@gmail.com</td><td>loginUsername : debascoguy</td><td>email : debascoguy@gmail.com</td><td>username : debascoguy</td><td>all_columns : debascoguy@gmail.com debascoguy 4 debascoguy@gmail.com debascoguy 4</td></tr><tr><td>8</td><td>loginEmail : debascoguy@yahoo.com</td><td>loginUsername : </td><td>email : debascoguy@yahoo.com</td><td>username : </td><td>priv_level : 1</td><td>all_columns : debascoguy@yahoo.com  1 debascoguy@yahoo.com  1</td></tr><tr><td>9</td><td>loginEmail : debascoguy@gmail.com</td><td>loginUsername : debascoguy</td><td>email : debascoguy@gmail.com</td><td>username : debascoguy</td><td>all_columns : debascoguy@gmail.com debascoguy 4 debascoguy@gmail.com debascoguy 4</td></tr><tr><td>10</td><td>loginEmail : debascoguy@yahoo.com</td><td>loginUsername : </td><td>email : debascoguy@yahoo.com</td><td>username : </td><td>priv_level : 1</td><td>all_columns : debascoguy@yahoo.com  1 debascoguy@yahoo.com  1</td></tr>
+				</tbody>
+				</table>
+				</div>
+				</div>
+				</div>
+				
+    <script>
+    $(function() {
+	//Please report any bug OR any question on usage - on the github.
+
+        var simpleTableData = $('#myTable').simpleTableData({
+            currentPage:1,
+            //'int' already exist by default but I'm jut testing the ability for user to add there own sorting function.
+            // IT WORKS perfectly!
+            addDataTypes: {
+                integer : function(a, b) {
+                        return parseInt(a, 10) - parseInt(b, 10);
+                    }
+            }
+        });
+        simpleTableData.getController().beforeTableSort = function(th, event){
+            console.log('Start Sorting Column '+ (th.index()+1));
+        };
+        simpleTableData.getController().afterTableSort = function(th, event){
+            console.log('Finished Sorting Column '+ (th.index()+1));
+        };
+		
+// Direct JS Object method of using the SimpleTableData
+//        var table = new Simple.TableData();
+//        table.tableSelector = '#myTable';
+//        table.showCurrentPage();
+    });
+
+    </script>
+</body></html>
