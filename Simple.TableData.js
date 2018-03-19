@@ -167,7 +167,7 @@ Simple.TableData = function(options){
                 "\nTo avoid pagination control malfunction, please set this to >= 3, even if you have lesser items to display.");
             this.displayedPages = 3;
         }
-
+        this.controller = new Simple.TableDataControls(this);
         this.sort.init(this.instanceId, this.tableSelector, this.css.sortColumnIcon);
     };
 
@@ -179,7 +179,6 @@ Simple.TableData = function(options){
     this.getController = function(){
         if (this.controller == null) {
             this.init();
-            this.controller = new Simple.TableDataControls(this);
         }
         return this.controller;
     };
@@ -275,9 +274,6 @@ Simple.TableData = function(options){
             this.numOfPages = Math.ceil(totalRows / this.tableRowsPerPage);
             /**@render Pagination Controls */
             $(pagingControlsContainer).html(this.view.getPaginationControlsHtml(this));
-            if (this.controller == null){
-                this.controller = new Simple.TableDataControls(this);
-            }
         }
         $(this.showingInfoSelector).html("Showing "+(start+1)+' to '+(end > totalRows ? totalRows : end)+' of '+totalRows+' Entries');
     };
