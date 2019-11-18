@@ -14,7 +14,7 @@
  *
  * Open source under the BSD License.
  *
- * Copyright © 2018 Ademola Aina
+ * Copyright Â© 2018 Ademola Aina
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -93,10 +93,18 @@ Simple.TableData = function(options){
     defaultOption.css.sortUpIcon = 'fa fa-sort-asc';
     /**@Advanced Implementation default using a custom Json Data Source */
     defaultOption.dataSource = {};
-    /**@Using_Ajax as DataSource */
+   /**@Using_Ajax as DataSource */
     defaultOption.ajax = {};
     defaultOption.ajax.params = {};
     defaultOption.ajax.url = '';
+    defaultOption.ajax.onSuccessCallBack = function(response){
+        console.log(response);
+        return response;
+    };
+    defaultOption.ajax.onFailureCallBack = function(error){
+        alert("Ajax Error  - See Console for details!");
+        console.log(error);
+    };
 
 
     if (typeof options === 'undefined') {
@@ -137,6 +145,8 @@ Simple.TableData = function(options){
     this.ajax = getOption('ajax');
     this.ajax.params = getAjaxOption('params');
     this.ajax.url = getAjaxOption('url');
+    this.ajax.onSuccessCallBack = getAjaxOption("onSuccessCallBack");
+    this.ajax.onFailureCallBack = getAjaxOption("onFailureCallBack");
     this.css = getOption('css');
     this.css.paginationLayout = getCssOption('paginationLayout');
     this.css.tableInfoLayout = getCssOption('tableInfoLayout');
@@ -226,6 +236,24 @@ Simple.TableData = function(options){
         /**@NoFilter */
         return dataSource;
     };
+    
+    this.showingInfo = function(start, end, totalRows){
+        if ($(table.showingInfoSelector)[0]){
+            $(table.showingInfoSelector).html("Showing "+(totalRows > 0 ? start+1 : 0)+' to '+
+                                              (end > totalRows ? totalRows : end)+' of '+totalRows+' Entries');
+        }
+    };
+    
+    this.showControlButton = function(totalRows){
+        $(table.pagingControlsContainer).html('');
+        table.numOfPages = 0;
+        if (totalRows > table.tableRowsPerPage){
+            /** Auto-Calculate the number of Pages. */
+            table.numOfPages = Math.ceil(totalRows / table.tableRowsPerPage);
+            /**@render Pagination Controls */
+            $(table.pagingControlsContainer).html(table.view.getPaginationControlsHtml(this));
+        }
+    };
 
 
     /**
@@ -235,7 +263,7 @@ Simple.TableData = function(options){
         if (this.controller == null) {
             this.init();
         }
-        var html = '', start = 0, end = 'all';
+        var html = '', start = 0, end = 'all', totalRows = 0;
         if (table.tableRowsPerPage != 'all'){
             start = (table.currentPage-1) * table.tableRowsPerPage;
             end = start+table.tableRowsPerPage;
@@ -246,14 +274,17 @@ Simple.TableData = function(options){
             var response = {html:'', currentPage:table.currentPage, start:start, end:end, totalRows:0};
             table.ajax.params = table.utility.mergeObjects(table.ajax.params,response);
             $.post(table.ajax.url, table.ajax.params, function(response){
-                table.tableSelector.find("tbody").html(response.html);
-                if (table.tableRowsPerPage == 'all'){
-                    table.tableRowsPerPage = response.totalRows;
-                    totalRows = response.totalRows;
-                    start = response.start;
-                    end = response.end;
+                html = table.ajax.onSuccessCallBack(response);
+                table.tableSelector.find("tbody").html(html);
+                if (table.tableRowsPerPage === 'all'){
+                    table.tableRowsPerPage = response.totalItems;
                 }
-            }, 'json');
+                totalRows = response.totalItems;
+                start = (table.currentPage-1) * table.tableRowsPerPage;
+                end = start+table.tableRowsPerPage;
+                table.showingInfo(start, end, totalRows);
+                table.showControlButton(totalRows);
+            }, 'json').fail(table.ajax.onFailureCallBack);
         }
         else{
             /**@Basic_OR_Advanced Implementation */
@@ -265,17 +296,9 @@ Simple.TableData = function(options){
             }
             data.slice(start, end).each(function(){ html += this.outerHTML; });
             table.tableSelector.find("tbody").html(html);
+            table.showingInfo(start, end, totalRows);
+            table.showControlButton(totalRows);
         }
-
-        $(pagingControlsContainer).html('');
-        this.numOfPages = 0;
-        if (totalRows > this.tableRowsPerPage){
-            /** Auto-Calculate the number of Pages. */
-            this.numOfPages = Math.ceil(totalRows / this.tableRowsPerPage);
-            /**@render Pagination Controls */
-            $(pagingControlsContainer).html(this.view.getPaginationControlsHtml(this));
-        }
-        $(this.showingInfoSelector).html("Showing "+(start+1)+' to '+(end > totalRows ? totalRows : end)+' of '+totalRows+' Entries');
     };
 
 };
